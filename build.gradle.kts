@@ -40,7 +40,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             groupId = groupId
-            artifactId = rootProject.name
+            artifactId = "amber-toolchain"
             from(components["java"])
         }
     }

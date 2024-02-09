@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":amber-platform-util"))
     implementation(gradleApi())
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }

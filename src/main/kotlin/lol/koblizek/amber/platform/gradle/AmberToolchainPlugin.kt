@@ -3,6 +3,7 @@ package lol.koblizek.amber.platform.gradle
 import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.util.Optional
 
 class AmberToolchainPlugin : Plugin<Project> {
 
@@ -16,12 +17,13 @@ class AmberToolchainPlugin : Plugin<Project> {
     }
 }
 
-fun <R> Any.safe(action: () -> R) {
+fun <R : Any> Any.safe(action: () -> R): Optional<R> {
     try {
-        action()
+        return Optional.of(action())
     } catch (e: Exception) {
         println("An error occurred!Reason: \n${e.message}")
         println("Stacktrace:")
         e.printStackTrace()
     }
+    return Optional.empty()
 }

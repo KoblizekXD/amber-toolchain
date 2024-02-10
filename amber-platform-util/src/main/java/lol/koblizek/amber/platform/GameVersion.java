@@ -1,11 +1,9 @@
 package lol.koblizek.amber.platform;
 
+/**
+ * Represents a Minecraft version as enum
+ */
 public enum GameVersion {
-    V1_8("1.8"),
-    V1_8_8("1.8.8"),
-    V1_8_9("1.8.9"),
-    V1_9("1.9"),
-    V1_9_4("1.9.4"),
     V1_10("1.10"),
     V1_11("1.11"),
     V1_12("1.12"),
@@ -36,7 +34,12 @@ public enum GameVersion {
     V1_20("1.20"),
     V1_20_1("1.20.1"),
     V1_20_2("1.20.2"),
-    V1_20_3("1.20.3");
+    V1_20_3("1.20.3"),
+    V1_8("1.8"),
+    V1_8_8("1.8.8"),
+    V1_8_9("1.8.9"),
+    V1_9("1.9"),
+    V1_9_4("1.9.4");
     private final String version;
 
     GameVersion(String version) {
@@ -49,6 +52,11 @@ public enum GameVersion {
         return version;
     }
 
+    /**
+     * Get the version from the name
+     * @param name The name of the version
+     * @return Parsed version or null if not found
+     */
     public static GameVersion getProviding(String name) {
         for (GameVersion version : values()) {
             if (version.toString().equals(name)) {

@@ -5,6 +5,10 @@ import lol.koblizek.amber.platform.MappingProvider;
 
 import java.util.List;
 
+/**
+ * Represents a provider to the game files for a specific provider,
+ * such include Fabric, Forge or Official Mojang.
+ */
 public interface VendorSpecificVersionProvider {
     MappingProvider getAsMappingProvider();
     String getName();
@@ -38,6 +42,11 @@ public interface VendorSpecificVersionProvider {
         }
     }
 
+    /**
+     * Represents an asset index, which is a json file containing information about assets
+     * @param id The id of the asset index
+     * @param url The url to the asset index json
+     */
     record AssetIndex(int id, String url) {
         @Override
         public String toString() {

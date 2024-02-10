@@ -15,3 +15,13 @@ class AmberToolchainPlugin : Plugin<Project> {
         lateinit var minecraftExtension: MinecraftExtension
     }
 }
+
+fun <R> Any.safe(action: () -> R) {
+    try {
+        action()
+    } catch (e: Exception) {
+        println("An error occurred!Reason: \n${e.message}")
+        println("Stacktrace:")
+        e.printStackTrace()
+    }
+}

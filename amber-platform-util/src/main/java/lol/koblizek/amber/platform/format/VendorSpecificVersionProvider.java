@@ -12,7 +12,9 @@ import java.util.List;
 public interface VendorSpecificVersionProvider {
     MappingProvider getAsMappingProvider();
     String getName();
-    GameDataProvider getMinecraftData(GameVersion version, MappingProvider mappingProvider);
+    GameDataProvider getMinecraftData(GameVersion version);
+    String getVersionManifestUrl();
+    List<GameVersion> getAllVersions();
 
     interface GameDataProvider {
         List<Library> getLibraries();

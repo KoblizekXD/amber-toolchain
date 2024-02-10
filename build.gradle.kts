@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.9.21"
     `java-gradle-plugin`
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "lol.koblizek"
@@ -11,14 +14,21 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":amber-platform-util"))
-    implementation(gradleApi())
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+val shadowImplement by configurations.creating {
 }
 
-tasks.test {
-    useJUnitPlatform()
+configurations.compileOnly.configure {
+    extendsFrom(shadowImplement)
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier = null
+    configurations = listOf(shadowImplement)
+}
+
+dependencies {
+    implementation(gradleApi())
+    shadowImplement(project(":amber-platform-util"))
 }
 
 kotlin {

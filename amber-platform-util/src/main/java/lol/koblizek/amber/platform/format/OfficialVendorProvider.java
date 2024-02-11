@@ -117,6 +117,22 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
         public GameVersion getVersion() {
             return version;
         }
+
+        @Override
+        public List<ArgumentPart> getGameArguments() {
+            JsonObject args = json.getAsJsonObject("arguments");
+            List<ArgumentPart> list = new ArrayList<>();
+            args.getAsJsonArray("game").forEach(e -> list.add(ArgumentPart.create(e)));
+            return list;
+        }
+
+        @Override
+        public List<ArgumentPart> getJvmArguments() {
+            JsonObject args = json.getAsJsonObject("arguments");
+            List<ArgumentPart> list = new ArrayList<>();
+            args.getAsJsonArray("jvm").forEach(e -> list.add(ArgumentPart.create(e)));
+            return list;
+        }
     }
 
     @Override

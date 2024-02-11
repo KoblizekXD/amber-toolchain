@@ -1,10 +1,13 @@
 package lol.koblizek.amber.platform.format;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +39,8 @@ public interface VendorSpecificVersionProvider {
         String getClientMappingsUrl();
         String getServerMappingsUrl();
         GameVersion getVersion();
+        List<ArgumentPart> getGameArguments();
+        List<ArgumentPart> getJvmArguments();
     }
 
     /**
@@ -74,6 +79,74 @@ public interface VendorSpecificVersionProvider {
         }
     }
 
+    enum ProvidingAction {
+        ONLY_LINUX("os.name", "linux"),
+        ONLY_WINDOWS("os.name", "windows"),
+        ONLY_MAC("os.name", "osx"),
+        DEMO_ONLY("features.is_demo_user", "true"),
+        HAS_CUSTOM_RESOLUTION("features.has_custom_resolution", "true"),
+        IS_X86("os.arch", "x86"),
+        IS_WIN10("os.version", "^10\\\\.");
+
+        private final String on;
+        private final String expValue;
+
+        ProvidingAction(String on, String expValue) {
+            this.on = on;
+            this.expValue = expValue;
+        }
+
+        public String getExpValue() {
+            return expValue;
+        }
+
+        public String getOn() {
+            return on;
+        }
+
+        public static ProvidingAction parseObject(JsonObject object) {
+            for (ProvidingAction value : values()) {
+                if (inner(object, value.on) != null && inner(object, value.on).getAsString().matches(value.expValue)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    record ArgumentPart(ProvidingAction action, String... value) {
+        public boolean isReplaceable() {
+            return value[0].matches("\\$\\{.*}");
+        }
+
+        public static ArgumentPart create(JsonElement e) {
+            if (e.isJsonPrimitive()) {
+                return new ArgumentPart(null, e.getAsString());
+            } else {
+                JsonObject obj = e.getAsJsonObject();
+                String[] values;
+                // Here we parse the value/s part of the argument
+                if (obj.get("value").isJsonPrimitive())
+                    values = new String[] {obj.get("value").getAsString()};
+                else {
+                    List<String> tmp = new ArrayList<>();
+                    obj.get("value").getAsJsonArray().forEach(t -> tmp.add(t.getAsString()));
+                    values = tmp.toArray(String[]::new);
+                }
+                // Here is where we parse the ruleset part of the argument
+                ProvidingAction action = null;
+                if (obj.has("rules")) {
+                    action = ProvidingAction.parseObject(obj.getAsJsonArray("rules").get(0)
+                            .getAsJsonObject());
+                }
+                return new ArgumentPart(
+                        action,
+                        values
+                );
+            }
+        }
+    }
+
     /**
      * Represents an asset index, which is a json file containing information about assets
      * @param id The id of the asset index
@@ -84,5 +157,17 @@ public interface VendorSpecificVersionProvider {
         public String toString() {
             return String.valueOf(id);
         }
+    }
+
+    static JsonElement inner(JsonElement e, String path) {
+        String[] parts = path.split("\\.");
+        try {
+            for (String part : parts) {
+                e = e.getAsJsonObject().get(part);
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return e;
     }
 }

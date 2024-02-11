@@ -1,5 +1,7 @@
 package lol.koblizek.amber.platform.format;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
 
@@ -10,10 +12,16 @@ import java.util.List;
  * such include Fabric, Forge or Official Mojang.
  */
 public interface VendorSpecificVersionProvider {
+    Gson gson = new Gson();
+
     MappingProvider getAsMappingProvider();
     String getName();
     GameDataProvider getMinecraftData(GameVersion version);
     String getVersionManifestUrl();
+
+    /**
+     * @return A list of all versions that are available for the provider and can be decompiled
+     */
     List<GameVersion> getAllVersions();
 
     interface GameDataProvider {
@@ -25,6 +33,7 @@ public interface VendorSpecificVersionProvider {
         String getServerJarUrl();
         String getClientMappingsUrl();
         String getServerMappingsUrl();
+        GameVersion getVersion();
     }
 
     /**
@@ -40,7 +49,26 @@ public interface VendorSpecificVersionProvider {
         public enum LibraryAction {
             ONLY_LINUX,
             ONLY_WINDOWS,
-            ONLY_MAC,
+            ONLY_MAC;
+
+            public static LibraryAction getCorresponding(JsonObject libraryObject) {
+                if (libraryObject.has("rules")) {
+                    for (var rule : libraryObject.getAsJsonArray("rules")) {
+                        var ruleObject = rule.getAsJsonObject();
+                        var osName = ruleObject.getAsJsonObject("os").get("name").getAsString();
+                        return switch (osName) {
+                            case "linux" -> ONLY_LINUX;
+                            case "windows" -> ONLY_WINDOWS;
+                            case "osx" -> ONLY_MAC;
+                            default -> {
+                                System.err.println("Unknown OS: " + osName + ", please report to developer");
+                                yield null;
+                            }
+                        };
+                    }
+                }
+                return null;
+            }
         }
     }
 

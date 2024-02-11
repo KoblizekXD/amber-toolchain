@@ -1,5 +1,7 @@
 package lol.koblizek.amber.platform;
 
+import java.util.List;
+
 /**
  * Represents a Minecraft version as enum
  */
@@ -64,5 +66,24 @@ public enum GameVersion {
             }
         }
         return null;
+    }
+
+    /**
+     * Get a list of versions that are in the range
+     * @param from The starting version(inclusive)
+     * @param to The ending version(inclusive)
+     * @return A list of versions that are in the range
+     */
+    public static List<GameVersion> ranging(GameVersion from, GameVersion to) {
+        return List.of(values()).subList(from.ordinal(), to.ordinal() + 1);
+    }
+
+    /**
+     * Get a list of versions that are from the starting version to the latest
+     * @param from Starting version(inclusive)
+     * @return A list of versions that are from the starting version to the latest
+     */
+    public static List<GameVersion> from(GameVersion from) {
+        return List.of(values()).subList(from.ordinal(), values().length);
     }
 }

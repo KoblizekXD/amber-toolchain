@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class OfficialVendorProvider implements VendorSpecificVersionProvider {
@@ -26,6 +25,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
 
     @Override
     public GameDataProvider getMinecraftData(GameVersion version) {
+        if (!getAllVersions().contains(version)) return null; // Must return null as it's not supported by mappings
         try (var manifestReader = new InputStreamReader(new URI(getVersionManifestUrl()).toURL().openStream())) {
             JsonObject manifest = gson.fromJson(manifestReader, JsonObject.class);
             for (JsonElement versions : manifest.getAsJsonArray("versions")) {
@@ -33,7 +33,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
                 if (versionObject.get("id").getAsString().equals(version.toString())) {
                     try (var versionReader = new InputStreamReader(new URI(versionObject.get("url").getAsString()).toURL().openStream())) {
                         JsonObject versionData = gson.fromJson(versionReader, JsonObject.class);
-                        return new MojangGameDataProvider(versionData, version);
+                        return new MojangGameDataProvider(versionData, versionObject.get("url").getAsString(), version);
                     }
                 }
             }
@@ -46,11 +46,18 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
     static class MojangGameDataProvider implements GameDataProvider {
 
         private final JsonObject json;
+        private final String jsonUrl;
         private final GameVersion version;
 
-        MojangGameDataProvider(JsonObject json, GameVersion version) {
+        MojangGameDataProvider(JsonObject json, String jsonUrl, GameVersion version) {
             this.json = json;
+            this.jsonUrl = jsonUrl;
             this.version = version;
+        }
+
+        @Override
+        public String getJsonUrl() {
+            return jsonUrl;
         }
 
         @Override

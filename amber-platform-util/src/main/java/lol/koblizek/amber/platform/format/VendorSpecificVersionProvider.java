@@ -25,6 +25,8 @@ public interface VendorSpecificVersionProvider {
     List<GameVersion> getAllVersions();
 
     interface GameDataProvider {
+        String getJsonUrl();
+
         List<Library> getLibraries();
         String getPathToClientMainClass();
         int getMinimumJavaVersion();

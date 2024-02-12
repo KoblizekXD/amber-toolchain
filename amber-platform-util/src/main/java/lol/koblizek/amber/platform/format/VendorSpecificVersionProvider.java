@@ -4,6 +4,7 @@ import com.google.gson.*;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
 import lol.koblizek.amber.platform.util.GameDataProviderSerializer;
+import lol.koblizek.amber.platform.util.Os;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,16 @@ public interface VendorSpecificVersionProvider {
      * @param isNative Specifies if the library is native or not
      */
     record Library(String name, String artifact, LibraryAction action, boolean isNative) {
+
+        public boolean matchesOs(Os os) {
+            if (action == null) return true;
+            return switch (action) {
+                case ONLY_LINUX -> os == Os.LINUX;
+                case ONLY_WINDOWS -> os == Os.WINDOWS;
+                case ONLY_MAC -> os == Os.MAC;
+            };
+        }
+
         public enum LibraryAction {
             ONLY_LINUX,
             ONLY_WINDOWS,

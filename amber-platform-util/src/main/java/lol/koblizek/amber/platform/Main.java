@@ -8,6 +8,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated Was only used to test the enum generation
+ */
+@Deprecated
 public class Main {
     public static void main(String[] args) throws Exception {
         // Like what even is this? I don't even know what this is supposed to do

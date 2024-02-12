@@ -1,11 +1,9 @@
 package lol.koblizek.amber.platform.format;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
+import lol.koblizek.amber.platform.util.GameDataProviderSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.List;
  * such include Fabric, Forge or Official Mojang.
  */
 public interface VendorSpecificVersionProvider {
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(GameDataProvider.class, new GameDataProviderSerializer()).create();
 
     MappingProvider getAsMappingProvider();
     String getName();
@@ -28,6 +26,7 @@ public interface VendorSpecificVersionProvider {
     List<GameVersion> getAllVersions();
 
     interface GameDataProvider {
+        Gson localGson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().registerTypeAdapter(GameDataProvider.class, new GameDataProviderSerializer()).create();
         String getJsonUrl();
 
         List<Library> getLibraries();
@@ -41,6 +40,10 @@ public interface VendorSpecificVersionProvider {
         GameVersion getVersion();
         List<ArgumentPart> getGameArguments();
         List<ArgumentPart> getJvmArguments();
+
+        default String getAsString() {
+            return localGson.toJson(this, GameDataProvider.class);
+        }
     }
 
     /**
@@ -152,10 +155,10 @@ public interface VendorSpecificVersionProvider {
      * @param id The id of the asset index
      * @param url The url to the asset index json
      */
-    record AssetIndex(int id, String url) {
+    record AssetIndex(String id, String url) {
         @Override
         public String toString() {
-            return String.valueOf(id);
+            return id;
         }
     }
 

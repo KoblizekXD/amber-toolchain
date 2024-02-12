@@ -2,6 +2,7 @@ package lol.koblizek.amber.platform.format;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
 
@@ -45,7 +46,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
 
     static class MojangGameDataProvider implements GameDataProvider {
 
-        private final JsonObject json;
+        private final transient JsonObject json;
         private final String jsonUrl;
         private final GameVersion version;
 
@@ -85,7 +86,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
 
         @Override
         public AssetIndex getAssetIndex() {
-            return new AssetIndex(json.getAsJsonObject("assetIndex").getAsJsonPrimitive("id").getAsInt(),
+            return new AssetIndex(json.getAsJsonObject("assetIndex").getAsJsonPrimitive("id").getAsString(),
                     json.getAsJsonObject("assetIndex").getAsJsonPrimitive("url").getAsString());
         }
 

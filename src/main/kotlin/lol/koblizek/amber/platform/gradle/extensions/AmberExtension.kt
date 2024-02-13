@@ -4,8 +4,24 @@ import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companio
 import lol.koblizek.amber.platform.util.Os
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Property
 
-abstract class AmberExtension(private val project: Project) {
+abstract class AmberExtension(private val project: Project) : ExtensionAware {
+
+    abstract class SourcesExtension {
+        abstract fun getSource(): Property<String>
+    }
+
+    init {
+        extensions.create("sources", SourcesExtension::class.java)
+    }
+
+    abstract fun getEnableDevelopment(): Property<Boolean>
+
+    fun enableDevelopment() {
+        getEnableDevelopment().set(true)
+    }
 
     fun minecraft(): Dependency {
         return project.dependencies.create("com.mojang:minecraft:")

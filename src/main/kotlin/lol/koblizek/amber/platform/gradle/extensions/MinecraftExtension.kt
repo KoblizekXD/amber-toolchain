@@ -12,16 +12,22 @@ abstract class MinecraftExtension(private val project: Project) {
 
     /**
      * Specifies Minecraft version for Amber toolchain to be using
+     *
+     * @throws IllegalStateException if invalid version was provided
      */
     fun minecraft(version: String) {
         getVersionData().set(VersionData(GameVersion.getProviding(version), MappingProvider.OFFICIAL))
     }
 
+    /**
+     * Specifies mappings for Amber toolchain to be using
+     * @throws IllegalStateException if version was not previously provided
+     */
     fun mappings(version: String) {
         if (getVersionData().isPresent) {
             getVersionData().set(VersionData(getVersionData().get().version, MappingProvider.get(version)))
         } else {
-            println("Can't set mappings, version was not provided")
+            throw IllegalStateException("Can't set mappings, version was not provided")
         }
     }
 

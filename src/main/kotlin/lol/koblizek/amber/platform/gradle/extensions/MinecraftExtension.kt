@@ -25,11 +25,6 @@ abstract class MinecraftExtension(private val project: Project) {
         }
     }
 
-    fun game() {
-        // Add the game dependency itself here
-        // project.dependencies.add("compileOnly", "")
-    }
-
     companion object {
         val Project.minecraftExtension: MinecraftExtension
             get() = extensions.getByType(MinecraftExtension::class.java)

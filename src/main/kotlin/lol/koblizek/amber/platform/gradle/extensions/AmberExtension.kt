@@ -27,8 +27,10 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
             getMinecraft().set(dir.path)
         }
 
-        val AmberExtension.sources: SourcesExtension
-            get() = extensions.getByType(SourcesExtension::class.java)
+        companion object {
+            val AmberExtension.sources: SourcesExtension
+                get() = extensions.getByType(SourcesExtension::class.java)
+        }
     }
 
     init {
@@ -74,7 +76,7 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
     }
 
     companion object {
-        val Project.amberExtension: MinecraftExtension
-            get() = extensions.getByType(MinecraftExtension::class.java)
+        val Project.amberExtension: AmberExtension
+            get() = extensions.getByType(AmberExtension::class.java)
     }
 }

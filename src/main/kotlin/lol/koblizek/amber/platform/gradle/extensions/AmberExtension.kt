@@ -6,11 +6,29 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
+import java.io.File
 
 abstract class AmberExtension(private val project: Project) : ExtensionAware {
 
     abstract class SourcesExtension {
-        abstract fun getSource(): Property<String>
+        abstract fun getMinecraft(): Property<String>
+        abstract fun getPatchSupport(): Property<String>
+        abstract fun getPatches(): Property<String>
+
+        fun patches(dir: File) {
+            getPatches().set(dir.path)
+        }
+
+        fun patchSupport(dir: File) {
+            getPatchSupport().set(dir.path)
+        }
+
+        fun minecraftSource(dir: File) {
+            getMinecraft().set(dir.path)
+        }
+
+        val AmberExtension.sources: SourcesExtension
+            get() = extensions.getByType(SourcesExtension::class.java)
     }
 
     init {

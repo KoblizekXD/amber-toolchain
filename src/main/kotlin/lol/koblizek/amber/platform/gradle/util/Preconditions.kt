@@ -1,5 +1,6 @@
 package lol.koblizek.amber.platform.gradle.util
 
+import lol.koblizek.amber.platform.Environment
 import lol.koblizek.amber.platform.gradle.extensions.AmberExtension.Companion.amberExtension
 import lol.koblizek.amber.platform.gradle.extensions.AmberExtension.SourcesExtension.Companion.sources
 import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companion.minecraftExtension
@@ -21,6 +22,10 @@ class Preconditions(val project: Project) {
 
     fun isVersionSet(): Boolean {
         return project.minecraftExtension.getVersionData().isPresent
+    }
+
+    fun envNotNull(): Boolean {
+        return project.amberExtension.getEnvironment().orNull != null
     }
 
     companion object {

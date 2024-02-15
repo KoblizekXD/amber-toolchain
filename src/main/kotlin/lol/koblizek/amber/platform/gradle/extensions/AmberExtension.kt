@@ -1,5 +1,6 @@
 package lol.koblizek.amber.platform.gradle.extensions
 
+import lol.koblizek.amber.platform.Environment
 import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companion.minecraftExtension
 import lol.koblizek.amber.platform.util.Os
 import org.gradle.api.Project
@@ -61,10 +62,12 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
     }
 
     init {
+        getEnvironment().convention(Environment.BOTH)
         extensions.create("sources", SourcesExtension::class.java)
     }
 
     abstract fun getEnableDevelopment(): Property<Boolean>
+    abstract fun getEnvironment(): Property<Environment>
 
     /**
      * Enables development mode for Amber toolchain, which will allow a
@@ -72,6 +75,10 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
      */
     fun enableDevelopment() {
         getEnableDevelopment().set(true)
+    }
+
+    fun useEnvironment(env: Environment) {
+        getEnvironment().set(env)
     }
 
     /**

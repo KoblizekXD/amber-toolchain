@@ -115,6 +115,11 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
         }
 
         @Override
+        public String getCommonMappingsUrl() {
+            return GameDataProvider.super.getCommonMappingsUrl();
+        }
+
+        @Override
         public GameVersion getVersion() {
             return version;
         }

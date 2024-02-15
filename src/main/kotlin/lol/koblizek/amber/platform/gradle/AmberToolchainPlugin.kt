@@ -2,6 +2,7 @@ package lol.koblizek.amber.platform.gradle
 
 import lol.koblizek.amber.platform.gradle.extensions.AmberExtension
 import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension
+import lol.koblizek.amber.platform.gradle.tasks.CollectRequiredData
 import lol.koblizek.amber.platform.gradle.tasks.GetAllVersionsTask
 import lol.koblizek.amber.platform.gradle.tasks.GetCurrentVersionData
 import org.gradle.api.Plugin
@@ -22,12 +23,17 @@ class AmberToolchainPlugin : Plugin<Project> {
         project.extensions.create("amber", AmberExtension::class.java, project)
         project.tasks.create("getAllVersions", GetAllVersionsTask::class.java)
         project.tasks.create("getCurrentVersionData", GetCurrentVersionData::class.java)
+        project.tasks.create("collectRequiredData", CollectRequiredData::class.java)
     }
 }
 
 fun Project.download(url: String, out: String): File {
     val u = URL(url)
-    u.openStream().use { Files.copy(it, Paths.get(out)) }
+    val fOut = File(out)
+    if (fOut.exists()) {
+        fOut.delete()
+    }
+    u.openStream().use { Files.copy(it, fOut.toPath()) }
     return File(out)
 }
 

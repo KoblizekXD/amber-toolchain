@@ -27,6 +27,7 @@ tasks.withType<ShadowJar> {
 }
 
 dependencies {
+    shadowImplement("net.fabricmc:mapping-io:0.5.1")
     implementation(gradleApi())
     shadowImplement(project(":amber-platform-util"))
 }

@@ -5,7 +5,6 @@ import lol.koblizek.amber.platform.format.VendorSpecificVersionProvider;
 
 public enum MappingProvider {
     OFFICIAL("official", new OfficialVendorProvider()),
-    MOJANG("mojang"),
     YARN("yarn"),
     MCP("mcp");
 

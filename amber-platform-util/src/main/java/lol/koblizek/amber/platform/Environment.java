@@ -5,5 +5,6 @@ package lol.koblizek.amber.platform;
  */
 public enum Environment {
     CLIENT,
-    SERVER
+    SERVER,
+    BOTH
 }

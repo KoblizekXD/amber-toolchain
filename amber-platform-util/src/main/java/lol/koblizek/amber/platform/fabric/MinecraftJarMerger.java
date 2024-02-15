@@ -64,7 +64,7 @@ public class MinecraftJarMerger implements AutoCloseable {
 
     private static final MinecraftClassMerger CLASS_MERGER = new MinecraftClassMerger();
     private final FileSystemUtil.Delegate inputClientFs, inputServerFs, outputFs;
-    private final Path inputClient, inputServer;
+    private final Path inputClient, inputServer, output;
     private final Map<String, Entry> entriesClient, entriesServer;
     private final Set<String> entriesAll;
     private boolean removeSnowmen = false;
@@ -77,6 +77,8 @@ public class MinecraftJarMerger implements AutoCloseable {
             }
         }
 
+        this.output = output.toPath();
+
         this.inputClient = (inputClientFs = FileSystemUtil.getJarFileSystem(inputClient, false)).get().getPath("/");
         this.inputServer = (inputServerFs = FileSystemUtil.getJarFileSystem(inputServer, false)).get().getPath("/");
         this.outputFs = FileSystemUtil.getJarFileSystem(output, true);
@@ -84,6 +86,10 @@ public class MinecraftJarMerger implements AutoCloseable {
         this.entriesClient = new HashMap<>();
         this.entriesServer = new HashMap<>();
         this.entriesAll = new TreeSet<>();
+    }
+
+    public Path getOutput() {
+        return output;
     }
 
     public void enableSnowmanRemoval() {

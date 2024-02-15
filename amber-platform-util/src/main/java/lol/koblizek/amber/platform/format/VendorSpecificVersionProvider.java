@@ -38,6 +38,9 @@ public interface VendorSpecificVersionProvider {
         String getServerJarUrl();
         String getClientMappingsUrl();
         String getServerMappingsUrl();
+        default String getCommonMappingsUrl() {
+            return null;
+        }
         GameVersion getVersion();
         List<ArgumentPart> getGameArguments();
         List<ArgumentPart> getJvmArguments();

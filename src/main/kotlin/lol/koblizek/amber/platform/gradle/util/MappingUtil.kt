@@ -10,6 +10,12 @@ import java.nio.file.Path
 class MappingUtil {
     companion object {
 
+        /**
+         * Merges two official mappings(proguard) into one
+         * @param input1 first input mappings(client)
+         * @param input2 second input mappings(server)
+         * @param output output path to generated mappings
+         */
         fun mergeOfficial(input1: Path, input2: Path, output: Path) {
             print("Merging official mappings...")
             val tree = MemoryMappingTree()

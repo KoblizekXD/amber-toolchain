@@ -1,12 +1,14 @@
 package lol.koblizek.amber.platform.format;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
 import lol.koblizek.amber.platform.util.GameDataProviderSerializer;
 import lol.koblizek.amber.platform.util.Os;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +61,10 @@ public interface VendorSpecificVersionProvider {
      */
     record Library(String name, String artifact, LibraryAction action, boolean isNative) {
 
+        /**
+         * @param os The operating system to check
+         * @return True if the library action requires the specific os, false otherwise
+         */
         public boolean matchesOs(Os os) {
             if (action == null) return true;
             return switch (action) {
@@ -68,11 +74,24 @@ public interface VendorSpecificVersionProvider {
             };
         }
 
+        /**
+         * Represents an action to be performed with the library, it's
+         * mainly used to filter out platform specific libraries or natives
+         * @implNote This enum will be later merged into {@link ProvidingAction}
+         */
         public enum LibraryAction {
             ONLY_LINUX,
             ONLY_WINDOWS,
             ONLY_MAC;
 
+            /**
+             * Parses the library object and returns the corresponding action for the library.
+             * Library actions allow to specify platform specific libraries/native sources.
+             *
+             * @see LibraryAction
+             * @param libraryObject The library object to parse
+             * @return The corresponding action for the library, or null if no action present
+             */
             public static LibraryAction getCorresponding(JsonObject libraryObject) {
                 if (libraryObject.has("rules")) {
                     for (var rule : libraryObject.getAsJsonArray("rules")) {
@@ -174,6 +193,12 @@ public interface VendorSpecificVersionProvider {
         }
     }
 
+    /**
+     * Parses the inner json element of a json object
+     * @param e The json element to work with
+     * @param path The path to the inner element
+     * @return The inner element, or null if not found
+     */
     static JsonElement inner(JsonElement e, String path) {
         String[] parts = path.split("\\.");
         try {

@@ -50,6 +50,6 @@ fun <R : Any> Any.safe(action: () -> R): Optional<R> {
 
 fun <E> List<E>.println() {
     for (e in this) {
-        kotlin.io.println(e.toString())
+        println(e.toString())
     }
 }

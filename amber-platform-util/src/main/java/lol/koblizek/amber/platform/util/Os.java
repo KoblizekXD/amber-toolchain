@@ -2,6 +2,9 @@ package lol.koblizek.amber.platform.util;
 
 import java.util.Locale;
 
+/**
+ * Enum representing the operating system.
+ */
 public enum Os {
     WINDOWS,
     LINUX,
@@ -9,6 +12,9 @@ public enum Os {
     SOLARIS,
     UNKNOWN;
 
+    /**
+     * @return The operating system of the host machine.
+     */
     public static Os getOS() {
         String os = System.getProperty("os.name").toLowerCase(Locale.getDefault());
         if (os.contains("win")) {

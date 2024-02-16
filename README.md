@@ -1,4 +1,2 @@
 # AmberMC Toolchain  
-Main toolchain used by Amber platform  
-
-## Prerequisites
+Main toolchain used by Amber platform.

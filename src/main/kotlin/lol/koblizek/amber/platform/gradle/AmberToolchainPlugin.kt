@@ -53,3 +53,9 @@ fun <E> List<E>.println() {
         println(e.toString())
     }
 }
+
+fun <E> List<E>.println(prefix: String) {
+    for (e in this) {
+        kotlin.io.println(prefix + e.toString())
+    }
+}

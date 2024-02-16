@@ -6,6 +6,7 @@ import lol.koblizek.amber.platform.MappingProvider;
 import lol.koblizek.amber.platform.util.GameDataProviderSerializer;
 import lol.koblizek.amber.platform.util.Os;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +39,6 @@ public interface VendorSpecificVersionProvider {
         String getServerJarUrl();
         String getClientMappingsUrl();
         String getServerMappingsUrl();
-        default String getCommonMappingsUrl() {
-            return null;
-        }
         GameVersion getVersion();
         List<ArgumentPart> getGameArguments();
         List<ArgumentPart> getJvmArguments();

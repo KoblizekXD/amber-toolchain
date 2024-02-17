@@ -2,14 +2,20 @@ package lol.koblizek.amber.platform.format;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.Expose;
 import lol.koblizek.amber.platform.GameVersion;
 import lol.koblizek.amber.platform.MappingProvider;
+import lol.koblizek.amber.platform.VersionData;
+import net.fabricmc.mappingio.format.proguard.ProGuardFileReader;
+import net.fabricmc.mappingio.format.proguard.ProGuardFileWriter;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +40,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
                 if (versionObject.get("id").getAsString().equals(version.toString())) {
                     try (var versionReader = new InputStreamReader(new URI(versionObject.get("url").getAsString()).toURL().openStream())) {
                         JsonObject versionData = gson.fromJson(versionReader, JsonObject.class);
-                        return new MojangGameDataProvider(versionData, versionObject.get("url").getAsString(), version);
+                        return new MojangGameDataProvider(versionData, versionObject.get("url").getAsString(), new VersionData(version, getAsMappingProvider()));
                     }
                 }
             }
@@ -44,13 +50,13 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
         }
     }
 
-    static class MojangGameDataProvider implements GameDataProvider {
+    public static class MojangGameDataProvider implements GameDataProvider {
 
         private final transient JsonObject json;
         private final String jsonUrl;
-        private final GameVersion version;
+        private final VersionData version;
 
-        MojangGameDataProvider(JsonObject json, String jsonUrl, GameVersion version) {
+        MojangGameDataProvider(JsonObject json, String jsonUrl, VersionData version) {
             this.json = json;
             this.jsonUrl = jsonUrl;
             this.version = version;
@@ -116,7 +122,12 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
 
         @Override
         public GameVersion getVersion() {
-            return version;
+            return version.version();
+        }
+
+        @Override
+        public MappingProvider getMappingProvider() {
+            return version.mappings();
         }
 
         @Override
@@ -133,6 +144,55 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
             List<ArgumentPart> list = new ArrayList<>();
             args.getAsJsonArray("jvm").forEach(e -> list.add(ArgumentPart.create(e)));
             return list;
+        }
+
+        @Override
+        public <T extends GameDataProvider> MappingProcessor<T> getMappingProcessor(File client, File server) {
+            return (MappingProcessor<T>) new OfficialMappingProcessor((OfficialVendorProvider) version.mappings().getVersionProvider(), this, client, server);
+        }
+    }
+
+    public record OfficialMappingProcessor(OfficialVendorProvider vendorProvider, MojangGameDataProvider gameData, File client, File server) implements MappingProcessor<MojangGameDataProvider> {
+
+        @Override
+        public MojangGameDataProvider getVersionProvider() {
+            return null;
+        }
+
+        @Override
+        public File getClientMappings() {
+            return client;
+        }
+
+        @Override
+        public File getServerMappings() {
+            return server;
+        }
+
+        @Override
+        public void merge(Path output) {
+            if (gameData.version.version().ordinal() >= GameVersion.V1_17.ordinal()) {
+                try {
+                    Files.copy(getClientMappings().toPath(), output);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                MemoryMappingTree tree = new MemoryMappingTree();
+                try (var buffer = Files.newBufferedWriter(output)) {
+                    ProGuardFileReader.read(Files.newBufferedReader(getClientMappings().toPath()), tree);
+                    ProGuardFileReader.read(Files.newBufferedReader(getServerMappings().toPath()), tree);
+                    tree.accept(new ProGuardFileWriter(buffer));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        @Override
+        public MappingProvider getMappingProvider() {
+            return gameData.getMappingProvider();
         }
     }
 

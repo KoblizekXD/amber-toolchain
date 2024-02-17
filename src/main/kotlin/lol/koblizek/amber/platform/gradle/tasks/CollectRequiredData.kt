@@ -4,6 +4,9 @@ import lol.koblizek.amber.platform.Environment
 import lol.koblizek.amber.platform.GameVersion
 import lol.koblizek.amber.platform.MappingProvider
 import lol.koblizek.amber.platform.fabric.MinecraftJarMerger
+import lol.koblizek.amber.platform.format.OfficialVendorProvider
+import lol.koblizek.amber.platform.format.OfficialVendorProvider.MojangGameDataProvider
+import lol.koblizek.amber.platform.format.OfficialVendorProvider.OfficialMappingProcessor
 import lol.koblizek.amber.platform.gradle.extensions.AmberExtension.Companion.amberExtension
 import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companion.minecraftExtension
 import lol.koblizek.amber.platform.gradle.util.Described
@@ -54,12 +57,8 @@ abstract class CollectRequiredData : AmberTask() {
                     val cM = download(mcData.clientMappingsUrl)
                     val sM = download(mcData.serverMappingsUrl)
                     val common = getOutputMappings().get().asFile
-                    if (versionData.mappings == MappingProvider.OFFICIAL && versionData.version.ordinal < GameVersion.V1_17.ordinal) {
-                        MappingUtil.mergeOfficial(cM.toPath(), sM.toPath(), common.toPath())
-                    } else {
-                        common.delete()
-                        cM.renameTo(getOutputMappings().get().asFile)
-                    }
+                    val processor = mcData.getMappingProcessor<MojangGameDataProvider>(cM, sM)
+                    processor.merge(common.toPath())
                     println("[Fabric] Merging client and server jars...")
                     MinecraftJarMerger(client, server, temporaryDir.resolve("minecraft.jar")).use {
                         it.merge()

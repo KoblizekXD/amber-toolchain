@@ -9,6 +9,7 @@ import lol.koblizek.amber.platform.MappingProvider;
 import lol.koblizek.amber.platform.util.GameDataProviderSerializer;
 import lol.koblizek.amber.platform.util.Os;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +43,10 @@ public interface VendorSpecificVersionProvider {
         String getClientMappingsUrl();
         String getServerMappingsUrl();
         GameVersion getVersion();
+        MappingProvider getMappingProvider();
         List<ArgumentPart> getGameArguments();
         List<ArgumentPart> getJvmArguments();
+        <T extends GameDataProvider> MappingProcessor<T> getMappingProcessor(File client, File server);
 
         default String getAsString() {
             return localGson.toJson(this, GameDataProvider.class);

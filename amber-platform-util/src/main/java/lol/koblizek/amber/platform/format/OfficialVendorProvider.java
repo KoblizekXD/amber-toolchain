@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -173,7 +174,7 @@ public class OfficialVendorProvider implements VendorSpecificVersionProvider {
         public void merge(Path output) {
             if (gameData.version.version().ordinal() >= GameVersion.V1_17.ordinal()) {
                 try {
-                    Files.copy(getClientMappings().toPath(), output);
+                    Files.copy(getClientMappings().toPath(), output, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

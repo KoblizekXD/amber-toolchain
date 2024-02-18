@@ -11,6 +11,7 @@ group = "lol.koblizek"
 version = "0.0.1"
 
 repositories {
+    maven("https://maven.neoforged.net/releases")
     mavenCentral()
 }
 
@@ -28,6 +29,7 @@ tasks.withType<ShadowJar> {
 
 dependencies {
     shadowImplement("net.fabricmc:mapping-io:0.5.1")
+    shadowImplement("net.neoforged:AutoRenamingTool:1.0.14")
     implementation(gradleApi())
     shadowImplement(project(":amber-platform-util"))
 }

@@ -6,6 +6,7 @@ import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companio
 import lol.koblizek.amber.platform.gradle.util.Described
 import lol.koblizek.amber.platform.gradle.util.cache.CacheData
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.workers.WorkerExecutor
 import java.io.File
 import javax.inject.Inject
@@ -36,6 +37,7 @@ abstract class AmberTask : DefaultTask() {
      *
      * @return CacheData
      */
+    @Internal
     fun getCache(): CacheData {
         project.minecraftExtension.getVersionData().get().let {
             return CacheData(it, getCacheDirectory().resolve("amber-toolchain/versioning/${it.version}-${it.mappings}/"))
@@ -46,10 +48,12 @@ abstract class AmberTask : DefaultTask() {
         return getCacheDirectory().resolve("amber-toolchain/versioning/${version.version}-${version.mappings}/").exists()
     }
 
+    @Internal
     fun getCache(version: VersionData): CacheData {
         return CacheData(version, getCacheDirectory().resolve("amber-toolchain/versioning/${version.version}-${version.mappings}/"))
     }
 
+    @Internal
     fun getCacheDirectory(): File {
         return project.gradle.gradleUserHomeDir.resolve("caches/")
     }

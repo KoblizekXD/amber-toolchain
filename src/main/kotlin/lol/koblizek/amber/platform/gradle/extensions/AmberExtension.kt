@@ -126,10 +126,10 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
     fun applyGameLibraries() {
         project.dependencies.add("compileOnly", minecraft())
         libraries().forEach {
-            project.dependencies.add("implementation", it)
+            project.dependencies.add("minecraftLibrary", it)
         }
         runtimeLibraries().forEach {
-            project.dependencies.add("implementation", it)
+            project.dependencies.add("runtimeOnly", it)
         }
     }
 

@@ -67,6 +67,8 @@ abstract class CollectRequiredData : AmberTask() {
                 }
                 null -> throw IllegalStateException("Environment is not set, cannot determine what to download!")
             }
+            getCache().addFile(getOutputFile().get().asFile)
+            getCache().addFile(getOutputMappings().get().asFile)
         } else {
             throw IllegalStateException("Versions are not set, cannot determine what to download!")
         }

@@ -16,6 +16,7 @@ class MappingUtil {
          * @param input2 second input mappings(server)
          * @param output output path to generated mappings
          */
+        @Deprecated("Deprecated in favor of platform-util class")
         fun mergeOfficial(input1: Path, input2: Path, output: Path) {
             print("Merging official mappings...")
             val tree = MemoryMappingTree()

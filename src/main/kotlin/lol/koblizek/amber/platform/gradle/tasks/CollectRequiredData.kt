@@ -59,11 +59,13 @@ abstract class CollectRequiredData : AmberTask() {
                     val common = getOutputMappings().get().asFile
                     val processor = mcData.getMappingProcessor<MojangGameDataProvider>(cM, sM)
                     processor.merge(common.toPath())
-                    println("[Fabric] Merging client and server jars...")
-                    MinecraftJarMerger(client, server, temporaryDir.resolve("minecraft.jar")).use {
-                        it.merge()
+                    if (mcData.version.ordinal < GameVersion.V1_17.ordinal) {
+                        println("[Fabric] Merging client and server jars...")
+                        MinecraftJarMerger(client, server, temporaryDir.resolve("minecraft.jar")).use {
+                            it.merge()
+                        }
+                        println("[Fabric] Merging done!")
                     }
-                    println("[Fabric] Merging done!")
                 }
                 null -> throw IllegalStateException("Environment is not set, cannot determine what to download!")
             }

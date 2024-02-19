@@ -27,6 +27,10 @@ class CacheData(val versionData: VersionData, val cacheDir: File) {
         return d
     }
 
+    fun getFile(name: String): File {
+        return cacheDir.resolve(name)
+    }
+
     companion object {
         fun File.appendLine(line: String) {
             appendText("$line\n")

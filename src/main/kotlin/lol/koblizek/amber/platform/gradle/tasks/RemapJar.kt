@@ -29,8 +29,12 @@ abstract class RemapJar : AmberTask() {
     abstract fun getOutputJar(): RegularFileProperty
 
     init {
-        getInputJar().set(temporaryDir.resolve("input.jar"))
-        getMappings().set(temporaryDir.resolve("mappings.txt"))
+        // We know there's only one CollectRequiredData task, so no need to check for others!
+        dependsOn(project.tasks.getByName("collectRequiredData"))
+        project.tasks.withType(CollectRequiredData::class.java).first()?.let {
+            getInputJar().set(it.getOutputFile())
+            getMappings().set(it.getOutputMappings())
+        }
         getIsReverse().convention(false)
         getPostRemapAction().convention(PostRemapAction.CACHE)
 
@@ -56,8 +60,10 @@ abstract class RemapJar : AmberTask() {
                 renamerBuilder.lib(it)
             }
 
+        println("[ART] Remapping jar...")
         val renamer = renamerBuilder.build()
         renamer.run(getInputJar().asFile.get(), getOutputJar().asFile.get())
+        println("[ART] Remapping done")
 
         if (getPostRemapAction().get() == PostRemapAction.CACHE) {
             val cache = getCache()

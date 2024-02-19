@@ -5,6 +5,7 @@ import lol.koblizek.amber.platform.gradle.extensions.MinecraftExtension.Companio
 import lol.koblizek.amber.platform.util.Os
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import java.io.File
@@ -89,9 +90,10 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
      *
      * @return Minecraft as dependency or null
      */
-    fun minecraft(): Dependency {
+    fun minecraft(): Dependency? {
         // TODO: Make return correctly
-        return project.dependencies.create("com.mojang:minecraft:")
+        // return project.dependencies.create("com.mojang:minecraft:")
+        return null
     }
 
     /**
@@ -124,13 +126,18 @@ abstract class AmberExtension(private val project: Project) : ExtensionAware {
      * Applies game libraries to the project with recommended configurations
      */
     fun applyGameLibraries() {
-        project.dependencies.add("compileOnly", minecraft())
+        if (minecraft() != null)
+            project.dependencies.add("compileOnly", minecraft()!!)
         libraries().forEach {
             project.dependencies.add("minecraftLibrary", it)
         }
         runtimeLibraries().forEach {
             project.dependencies.add("runtimeOnly", it)
         }
+    }
+
+    fun minecraftRepository(): MavenArtifactRepository {
+        return project.repositories.maven { it.setUrl("https://libraries.minecraft.net/") }
     }
 
     companion object {

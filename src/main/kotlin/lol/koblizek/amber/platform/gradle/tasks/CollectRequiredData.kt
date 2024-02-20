@@ -65,7 +65,7 @@ abstract class CollectRequiredData : AmberTask() {
                             it.merge()
                         }
                         println("[Fabric] Merging done!")
-                    }
+                    } else client.copyTo(getOutputFile().get().asFile, true)
                 }
                 null -> throw IllegalStateException("Environment is not set, cannot determine what to download!")
             }

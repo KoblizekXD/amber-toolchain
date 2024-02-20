@@ -44,8 +44,8 @@ abstract class RemapJar : AmberTask() {
 
     @TaskAction
     fun onExecute() {
-        var mapping = IMappingFile.load(getMappings().get().asFile);
-        if (getIsReverse().get())
+        var mapping = IMappingFile.load(getMappings().get().asFile)
+        if (!getIsReverse().get())
             mapping = mapping.reverse()
         val renamerBuilder = Renamer.builder()
             .withJvmClasspath()
@@ -61,8 +61,9 @@ abstract class RemapJar : AmberTask() {
             }
 
         println("[ART] Remapping jar...")
-        val renamer = renamerBuilder.build()
-        renamer.run(getInputJar().asFile.get(), getOutputJar().asFile.get())
+        renamerBuilder.build().use {
+            it.run(getInputJar().asFile.get(), getOutputJar().asFile.get())
+        }
         println("[ART] Remapping done")
 
         if (getPostRemapAction().get() == PostRemapAction.CACHE) {

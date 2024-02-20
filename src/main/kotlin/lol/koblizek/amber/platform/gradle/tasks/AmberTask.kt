@@ -27,6 +27,13 @@ abstract class AmberTask : DefaultTask() {
 
     fun download(file: String): File {
         val fileName = file.substring( file.lastIndexOf('/')+1, file.length )
+        try {
+            getCache().getFile(fileName).let {
+                if (it.exists()) {
+                    return it
+                }
+            }
+        } catch (_: Exception) {}
         return project.download(file, this.temporaryDir.resolve(fileName).path)
     }
 

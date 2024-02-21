@@ -28,6 +28,9 @@ tasks.withType<ShadowJar> {
 }
 
 dependencies {
+    shadowImplement("org.ow2.asm:asm:9.6")
+    shadowImplement("org.ow2.asm:asm-tree:9.6")
+    shadowImplement("org.ow2.asm:asm-commons:9.6")
     shadowImplement("net.fabricmc:mapping-io:0.5.1")
     shadowImplement("net.neoforged:AutoRenamingTool:1.0.14")
     implementation(gradleApi())

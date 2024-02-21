@@ -25,16 +25,22 @@ abstract class AmberTask : DefaultTask() {
     abstract fun getWorkerExecutor(): WorkerExecutor
 
 
-    fun download(file: String): File {
+    fun download(file: String, cache: Boolean = true): File {
         val fileName = file.substring( file.lastIndexOf('/')+1, file.length )
-        try {
-            getCache().getFile(fileName).let {
-                if (it.exists()) {
-                    return it
+        if (cache) {
+            try {
+                getCache().getFile(fileName).let {
+                    if (it.exists()) {
+                        return it
+                    }
                 }
-            }
-        } catch (_: Exception) {}
-        return project.download(file, this.temporaryDir.resolve(fileName).path)
+            } catch (_: Exception) {}
+        }
+        if (cache) {
+            val downloaded = project.download(file, this.temporaryDir.resolve(fileName).path)
+            getCache().addFile(downloaded)
+            return downloaded
+        } else return project.download(file, this.temporaryDir.resolve(fileName).path)
     }
 
     /**

@@ -12,10 +12,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-
-import org.objectweb.asm.*;
+import org.objectweb.asm.*
 import org.objectweb.asm.tree.ClassNode
-import org.objectweb.asm.tree.LocalVariableNode
 
 @Described("Remaps a jar using a given mapping file")
 abstract class RemapJar : AmberTask() {
